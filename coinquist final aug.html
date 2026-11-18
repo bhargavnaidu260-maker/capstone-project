@@ -1,0 +1,3282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CoinQuest — Student Money Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+         :root {
+            --teal: #1D9E75;
+            --teal2: #0F6E56;
+            --teal3: #E1F5EE;
+            --teal4: #9FE1CB;
+            --amber: #EF9F27;
+            --amber2: #FAEEDA;
+            --amber3: #854F0B;
+            --coral: #D85A30;
+            --coral2: #FAECE7;
+            --purple: #7F77DD;
+            --purple2: #EEEDFE;
+            --acc: #29CC8F;
+            --dbg: #F5F7F5;
+            --dcard: #fff;
+            --dtext: #1A1A1A;
+            --dmuted: #6B7280;
+            --dborder: #E5E7EB;
+            --lbg: #06150F;
+            --lcard: #0D1F18;
+            --lborder: #1A3028;
+            --ltext: #F0FBF5;
+            --lmuted: #6B9E87;
+            --radius: 14px;
+            --sh: 0 2px 12px rgba(0, 0, 0, 0.07);
+        }
+        
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+            font-family: 'DM Sans', sans-serif;
+        }
+        
+        .screen {
+            position: fixed;
+            inset: 0;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        
+        .screen.off {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.97);
+        }
+        /* LOGIN */
+        
+        #LS {
+            background: var(--lbg);
+            color: var(--ltext);
+            display: flex;
+            z-index: 10;
+        }
+        
+        .bg-fx {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .grid-pat {
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(29, 158, 117, 0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(29, 158, 117, 0.06) 1px, transparent 1px);
+            background-size: 48px 48px;
+        }
+        
+        .glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        
+        .ga {
+            top: -200px;
+            left: -100px;
+            background: radial-gradient(circle, rgba(29, 158, 117, 0.18) 0%, transparent 70%);
+        }
+        
+        .gb {
+            bottom: -200px;
+            right: -100px;
+            background: radial-gradient(circle, rgba(239, 159, 39, 0.10) 0%, transparent 70%);
+        }
+        
+        .coin {
+            position: absolute;
+            border-radius: 50%;
+            animation: floatUp linear infinite;
+        }
+        
+        @keyframes floatUp {
+            0% {
+                transform: translateY(110vh) rotate(0deg);
+            }
+            100% {
+                transform: translateY(-20vh) rotate(720deg);
+            }
+        }
+        
+        .lsplit {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .lhero {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 56px 64px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .llogo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 52px;
+            animation: fd .6s ease both;
+        }
+        
+        .llogo-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: var(--teal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .llogo-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: #fff;
+        }
+        
+        .llogo-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -.5px;
+        }
+        
+        .llogo-name span {
+            color: var(--amber);
+        }
+        
+        .eyebrow {
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--acc);
+            margin-bottom: 14px;
+            animation: fd .7s ease .1s both;
+        }
+        
+        .htitle {
+            font-family: 'Syne', sans-serif;
+            font-size: 50px;
+            font-weight: 900;
+            line-height: 1.05;
+            letter-spacing: -2px;
+            margin-bottom: 18px;
+            animation: fd .7s ease .15s both;
+        }
+        
+        .htitle .hl {
+            color: transparent;
+            -webkit-text-stroke: 1.5px var(--acc);
+        }
+        
+        .hsub {
+            font-size: 15px;
+            color: var(--lmuted);
+            line-height: 1.7;
+            max-width: 370px;
+            font-weight: 300;
+            animation: fd .7s ease .2s both;
+        }
+        
+        .pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+            margin-top: 34px;
+            animation: fd .8s ease .28s both;
+        }
+        
+        .pill-l {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(29, 158, 117, 0.1);
+            border: 1px solid rgba(29, 158, 117, 0.2);
+            border-radius: 30px;
+            padding: 6px 13px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--acc);
+        }
+        
+        .pill-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--acc);
+        }
+        
+        .preview-c {
+            margin-top: 42px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--lborder);
+            border-radius: 16px;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            width: fit-content;
+            animation: fd .9s ease .36s both;
+        }
+        
+        .sring-sm {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            flex-shrink: 0;
+        }
+        
+        .sring-sm svg {
+            transform: rotate(-90deg);
+        }
+        
+        .sring-c {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Syne', sans-serif;
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--acc);
+        }
+        
+        .prev-info p {
+            font-size: 12px;
+            color: var(--lmuted);
+            font-weight: 300;
+        }
+        
+        .prev-info strong {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--ltext);
+            display: block;
+            margin-bottom: 2px;
+        }
+        
+        .uni-b {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            position: absolute;
+            bottom: 26px;
+            left: 64px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--lborder);
+            border-radius: 8px;
+            padding: 7px 13px;
+            font-size: 11px;
+            color: var(--lmuted);
+        }
+        
+        .lform-panel {
+            width: 460px;
+            flex-shrink: 0;
+            background: var(--lcard);
+            border-left: 1px solid var(--lborder);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 52px 48px;
+            overflow-y: auto;
+            animation: sl .7s ease both;
+        }
+        
+        @keyframes sl {
+            from {
+                transform: translateX(40px);
+                opacity: 0;
+            }
+            to {
+                transform: none;
+                opacity: 1;
+            }
+        }
+        
+        @keyframes fd {
+            from {
+                transform: translateY(-14px);
+                opacity: 0;
+            }
+            to {
+                transform: none;
+                opacity: 1;
+            }
+        }
+        
+        .fhead {
+            margin-bottom: 28px;
+        }
+        
+        .fhead h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 5px;
+        }
+        
+        .fhead p {
+            font-size: 13px;
+            color: var(--lmuted);
+            font-weight: 300;
+        }
+        
+        .atabs {
+            display: flex;
+            margin-bottom: 26px;
+            border-bottom: 1px solid var(--lborder);
+        }
+        
+        .atab {
+            flex: 1;
+            text-align: center;
+            padding: 9px 0;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            color: var(--lmuted);
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+            transition: all .2s;
+        }
+        
+        .atab.active {
+            color: var(--acc);
+            border-bottom-color: var(--acc);
+        }
+        
+        .lf {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .lf.off {
+            display: none;
+        }
+        
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .field label {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--lmuted);
+            letter-spacing: .5px;
+            text-transform: uppercase;
+        }
+        
+        .fw {
+            position: relative;
+        }
+        
+        .fi {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 14px;
+            height: 14px;
+            opacity: .4;
+            color: var(--ltext);
+        }
+        
+        .fw input {
+            width: 100%;
+            padding: 11px 11px 11px 36px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--lborder);
+            border-radius: 10px;
+            font-size: 13px;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--ltext);
+            outline: none;
+            transition: border-color .2s, background .2s;
+        }
+        
+        .fw input::placeholder {
+            color: var(--lmuted);
+        }
+        
+        .fw input:focus {
+            border-color: var(--teal);
+            background: rgba(29, 158, 117, 0.05);
+        }
+        
+        .forgot {
+            font-size: 12px;
+            color: var(--lmuted);
+            text-align: right;
+            cursor: pointer;
+            margin-top: -6px;
+        }
+        
+        .forgot:hover {
+            color: var(--acc);
+        }
+        
+        .lmsg {
+            font-size: 12px;
+            padding: 9px 13px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .lmsg.err {
+            background: rgba(210, 50, 50, 0.1);
+            border: 1px solid rgba(210, 50, 50, .3);
+            color: #F87171;
+        }
+        
+        .lmsg.ok {
+            background: rgba(29, 158, 117, 0.1);
+            border: 1px solid rgba(29, 158, 117, .3);
+            color: var(--acc);
+        }
+        
+        .btn-go {
+            width: 100%;
+            padding: 13px;
+            background: var(--teal);
+            border: none;
+            border-radius: 10px;
+            font-family: 'Syne', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            cursor: pointer;
+            transition: background .2s, transform .1s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-go:hover {
+            background: var(--teal2);
+        }
+        
+        .btn-go:active {
+            transform: scale(.98);
+        }
+        
+        .shine {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+            animation: shine 2.5s ease 1s infinite;
+        }
+        
+        @keyframes shine {
+            0% {
+                left: -100%;
+            }
+            50% {
+                left: 150%;
+            }
+            100% {
+                left: 150%;
+            }
+        }
+        
+        .ldiv {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+        
+        .ldiv::before,
+        .ldiv::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--lborder);
+        }
+        
+        .ldiv span {
+            font-size: 11px;
+            color: var(--lmuted);
+        }
+        
+        .btn-demo {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid var(--lborder);
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--lmuted);
+            cursor: pointer;
+            transition: all .2s;
+        }
+        
+        .btn-demo:hover {
+            border-color: var(--acc);
+            color: var(--acc);
+            background: rgba(29, 158, 117, 0.05);
+        }
+        
+        .terms {
+            font-size: 11px;
+            color: var(--lmuted);
+            text-align: center;
+            font-weight: 300;
+            line-height: 1.6;
+        }
+        
+        .terms a {
+            color: var(--acc);
+            cursor: pointer;
+        }
+        
+        .lov {
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            background: var(--lbg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .3s;
+        }
+        
+        .lov.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .spin {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            border: 3px solid var(--lborder);
+            border-top-color: var(--acc);
+            animation: spin .8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .ltxt {
+            font-family: 'Syne', sans-serif;
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--acc);
+        }
+        /* DASHBOARD */
+        
+        #DS {
+            background: var(--dbg);
+            color: var(--dtext);
+            display: flex;
+            z-index: 5;
+        }
+        
+        .sb {
+            width: 232px;
+            background: var(--teal2);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            padding: 22px 14px;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+        
+        .sb-logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 21px;
+            font-weight: 800;
+            padding: 0 8px 14px;
+            letter-spacing: -.5px;
+        }
+        
+        .sb-logo span {
+            color: var(--amber);
+        }
+        
+        .sb-user {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 8px 10px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            margin-bottom: 6px;
+        }
+        
+        .sb-av {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+        
+        .sb-nm {
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .sb-id {
+            font-size: 10px;
+            opacity: .6;
+        }
+        
+        .ni {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 9px 11px;
+            border-radius: 9px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, .7);
+            transition: all .15s;
+        }
+        
+        .ni:hover {
+            background: rgba(255, 255, 255, .1);
+            color: #fff;
+        }
+        
+        .ni.active {
+            background: rgba(255, 255, 255, .18);
+            color: #fff;
+        }
+        
+        .ni svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+        
+        .nsep {
+            height: 1px;
+            background: rgba(255, 255, 255, .12);
+            margin: 7px 0;
+        }
+        
+        .sb-out {
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 9px 11px;
+            border-radius: 9px;
+            cursor: pointer;
+            font-size: 12px;
+            color: rgba(255, 255, 255, .45);
+            transition: all .15s;
+        }
+        
+        .sb-out:hover {
+            color: #fff;
+            background: rgba(255, 0, 0, 0.15);
+        }
+        
+        .dmain {
+            flex: 1;
+            overflow-y: auto;
+            padding: 26px 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .ptitle {
+            font-family: 'Syne', sans-serif;
+            font-size: 23px;
+            font-weight: 800;
+            letter-spacing: -.5px;
+        }
+        
+        .xp-badge {
+            background: var(--amber2);
+            color: var(--amber3);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+        
+        .srow {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 11px;
+        }
+        
+        .sc {
+            background: var(--dcard);
+            border-radius: var(--radius);
+            padding: 15px 17px;
+            border: 1px solid var(--dborder);
+            box-shadow: var(--sh);
+        }
+        
+        .slbl {
+            font-size: 11px;
+            color: var(--dmuted);
+            font-weight: 500;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+        }
+        
+        .sval {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            font-family: 'Syne', sans-serif;
+        }
+        
+        .sg {
+            color: var(--teal2);
+        }
+        
+        .sr {
+            color: var(--coral);
+        }
+        
+        .sp {
+            color: var(--purple);
+        }
+        
+        .ssub {
+            font-size: 11px;
+            color: var(--dmuted);
+            margin-top: 3px;
+        }
+        
+        .sup {
+            color: var(--teal);
+        }
+        
+        .sdn {
+            color: var(--coral);
+        }
+        
+        .edit-ic {
+            font-size: 11px;
+            color: var(--dmuted);
+            cursor: pointer;
+            margin-left: 5px;
+            font-weight: 400;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+        
+        .edit-ic:hover {
+            color: var(--teal);
+        }
+        
+        .budget-edit-row {
+            display: none;
+            gap: 6px;
+            margin-top: 8px;
+            align-items: center;
+        }
+        
+        .budget-edit-row input {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid var(--dborder);
+            border-radius: 7px;
+            font-size: 12px;
+            font-family: 'DM Sans', sans-serif;
+            outline: none;
+        }
+        
+        .budget-edit-row input:focus {
+            border-color: var(--teal);
+        }
+        
+        .budget-edit-row button {
+            padding: 6px 11px;
+            border-radius: 7px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            background: var(--teal);
+            color: #fff;
+            white-space: nowrap;
+        }
+        
+        .budget-edit-row button:hover {
+            opacity: .88;
+        }
+        
+        .g2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        
+        .card {
+            background: var(--dcard);
+            border-radius: var(--radius);
+            padding: 17px 19px;
+            border: 1px solid var(--dborder);
+            box-shadow: var(--sh);
+        }
+        
+        .ctitle {
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-family: 'Syne', sans-serif;
+        }
+        
+        .pill-g {
+            background: var(--teal3);
+            color: var(--teal2);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+        
+        .pill-a {
+            background: var(--amber2);
+            color: var(--amber3);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+        
+        .ssec {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .rw {
+            position: relative;
+            width: 96px;
+            height: 96px;
+            flex-shrink: 0;
+        }
+        
+        .rw svg {
+            transform: rotate(-90deg);
+        }
+        
+        .rc {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .rn {
+            font-family: 'Syne', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--teal2);
+        }
+        
+        .rl {
+            font-size: 10px;
+            color: var(--dmuted);
+        }
+        
+        .si h3 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+        
+        .si p {
+            font-size: 12px;
+            color: var(--dmuted);
+            line-height: 1.6;
+        }
+        
+        .lvbar-bg {
+            height: 5px;
+            background: #E5E7EB;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 9px;
+        }
+        
+        .lvbar-f {
+            height: 100%;
+            background: linear-gradient(90deg, var(--teal), var(--amber));
+            border-radius: 4px;
+            width: 72%;
+        }
+        
+        .lvtxt {
+            font-size: 10px;
+            color: var(--dmuted);
+            margin-top: 3px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .cbars {
+            display: flex;
+            align-items: flex-end;
+            gap: 6px;
+            height: 106px;
+            padding-top: 8px;
+        }
+        
+        .bcol {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            flex: 1;
+        }
+        
+        .bar {
+            width: 100%;
+            border-radius: 4px 4px 0 0;
+            transition: opacity .2s;
+            cursor: pointer;
+        }
+        
+        .bar:hover {
+            opacity: 1!important;
+        }
+        
+        .blbl {
+            font-size: 9px;
+            color: var(--dmuted);
+        }
+        
+        .bval {
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--teal2);
+        }
+        
+        .ei {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--dborder);
+        }
+        
+        .ei:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        
+        .eico {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        
+        .ein {
+            flex: 1;
+        }
+        
+        .en {
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .ed {
+            font-size: 11px;
+            color: var(--dmuted);
+        }
+        
+        .ea {
+            font-size: 13px;
+            font-weight: 700;
+        }
+        
+        .neg {
+            color: var(--coral);
+        }
+        
+        .pos {
+            color: var(--teal);
+        }
+        
+        .bi {
+            margin-bottom: 11px;
+        }
+        
+        .bi:last-child {
+            margin-bottom: 0;
+        }
+        
+        .bm {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+        
+        .bcat {
+            font-weight: 600;
+        }
+        
+        .bnum {
+            color: var(--dmuted);
+        }
+        
+        .brbg {
+            height: 6px;
+            background: #E5E7EB;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .brf {
+            height: 100%;
+            border-radius: 4px;
+        }
+        
+        .li {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 7px 0;
+            border-bottom: 1px solid var(--dborder);
+        }
+        
+        .li:last-child {
+            border-bottom: none;
+        }
+        
+        .lrnk {
+            width: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--dmuted);
+            text-align: center;
+        }
+        
+        .lav {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+        }
+        
+        .lnm {
+            flex: 1;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .lsc {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--teal2);
+        }
+        
+        .lyou {
+            background: var(--teal3);
+            border-radius: 7px;
+            padding: 7px 6px;
+        }
+        
+        .loi {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--dborder);
+        }
+        
+        .loi:last-child {
+            border-bottom: none;
+        }
+        
+        .loin {
+            flex: 1;
+        }
+        
+        .loname {
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .lodate {
+            font-size: 11px;
+            color: var(--dmuted);
+        }
+        
+        .loamt {
+            font-size: 13px;
+            font-weight: 700;
+        }
+        
+        .loamt.owe {
+            color: var(--coral);
+        }
+        
+        .loamt.owed {
+            color: var(--teal);
+        }
+        
+        .lst {
+            font-size: 10px;
+            padding: 2px 7px;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .lsp {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+        
+        .lss {
+            background: var(--teal3);
+            color: var(--teal2);
+        }
+        
+        .pchips {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 11px;
+        }
+        
+        .pchip {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: var(--dbg);
+            border: 1px solid var(--dborder);
+            border-radius: 20px;
+            padding: 4px 9px 4px 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .pcav {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: 700;
+            color: #fff;
+        }
+        
+        .sres {
+            background: var(--teal3);
+            border-radius: 9px;
+            padding: 11px 13px;
+            display: none;
+        }
+        
+        .sres p {
+            font-size: 12px;
+            color: var(--teal2);
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+        
+        .ti {
+            display: flex;
+            gap: 9px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--dborder);
+        }
+        
+        .ti:last-child {
+            border-bottom: none;
+        }
+        
+        .td {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--teal);
+            margin-top: 5px;
+            flex-shrink: 0;
+        }
+        
+        .tt {
+            font-size: 12px;
+            color: var(--dtext);
+            line-height: 1.65;
+        }
+        
+        .tt strong {
+            color: var(--teal2);
+        }
+        
+        .frow {
+            display: flex;
+            gap: 7px;
+            margin-bottom: 9px;
+            flex-wrap: wrap;
+        }
+        
+        .fin {
+            flex: 1;
+            min-width: 80px;
+            padding: 8px 10px;
+            border: 1px solid var(--dborder);
+            border-radius: 8px;
+            font-size: 12px;
+            font-family: 'DM Sans', sans-serif;
+            background: var(--dbg);
+            outline: none;
+            color: var(--dtext);
+        }
+        
+        .fin:focus {
+            border-color: var(--teal);
+            background: #fff;
+        }
+        
+        .fbtn {
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            background: var(--teal);
+            color: #fff;
+            font-family: 'DM Sans', sans-serif;
+        }
+        
+        .fbtn:hover {
+            opacity: .88;
+        }
+        
+        .dtabs {
+            display: flex;
+            gap: 3px;
+            background: var(--dbg);
+            border-radius: 8px;
+            padding: 3px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+        
+        .dtab {
+            padding: 5px 11px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--dmuted);
+            transition: all .15s;
+        }
+        
+        .dtab.active {
+            background: #fff;
+            color: var(--dtext);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .07);
+        }
+        
+        .dp {
+            display: none;
+            flex-direction: column;
+            gap: 18px;
+        }
+        
+        .dp.active {
+            display: flex;
+        }
+        /* Toast */
+        
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--teal2);
+            color: #fff;
+            padding: 9px 20px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .3s;
+            z-index: 999;
+            white-space: nowrap;
+        }
+        
+        .toast.show {
+            opacity: 1;
+        }
+        
+        .empty-msg {
+            font-size: 12px;
+            color: var(--dmuted);
+            padding: 16px 0;
+            text-align: center;
+        }
+        
+        .xdel {
+            border: none;
+            background: none;
+            color: var(--dmuted);
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 8px;
+            padding: 3px 7px;
+            border-radius: 6px;
+        }
+        
+        .xdel:hover {
+            background: var(--coral2);
+            color: var(--coral);
+        }
+        
+        .brf {
+            transition: width .5s ease;
+        }
+        
+        .bar {
+            transition: height .5s ease, opacity .2s;
+        }
+        
+        #scoreRing {
+            transition: stroke-dashoffset .6s ease;
+        }
+        
+        .lvbar-f {
+            transition: width .6s ease;
+        }
+        
+        @media(max-width:860px) {
+            .lhero {
+                display: none;
+            }
+            .lform-panel {
+                width: 100%;
+                border: none;
+                padding: 36px 24px;
+            }
+            .srow {
+                grid-template-columns: 1fr 1fr;
+            }
+            .g2 {
+                grid-template-columns: 1fr;
+            }
+            .sb {
+                width: 190px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- LOADING -->
+    <div class="lov" id="lov">
+        <div class="spin"></div>
+        <div class="ltxt" id="ltxt">Loading your dashboard…</div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <!-- LOGIN SCREEN -->
+    <div class="screen" id="LS">
+        <div class="bg-fx" id="bgfx">
+            <div class="grid-pat"></div>
+            <div class="glow ga"></div>
+            <div class="glow gb"></div>
+        </div>
+        <div class="lsplit">
+
+            <!-- HERO LEFT -->
+            <div class="lhero">
+                <div class="llogo">
+                    <div class="llogo-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 14.5h-2v-2h2v2zm0-4h-2c0-3.25 3-3 3-5 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 2.5-3 2.75-3 5z"/></svg></div>
+                    <div class="llogo-name">Coin<span>Quest</span></div>
+                </div>
+                <div class="eyebrow">PES University · BCA Capstone</div>
+                <h1 class="htitle">Master your<br/><span class="hl">money.</span><br/>Level up.</h1>
+                <p class="hsub">The gamified finance app for students — track spending, split bills, settle loans, and earn rewards for smart saving.</p>
+                <div class="pills">
+                    <div class="pill-l">
+                        <div class="pill-dot"></div>Expense Tracker</div>
+                    <div class="pill-l">
+                        <div class="pill-dot"></div>Bill Splitting</div>
+                    <div class="pill-l">
+                        <div class="pill-dot"></div>Peer Loans</div>
+                    <div class="pill-l">
+                        <div class="pill-dot"></div>Savings Score</div>
+                    <div class="pill-l">
+                        <div class="pill-dot"></div>Leaderboard</div>
+                </div>
+                <div class="preview-c">
+                    <div class="sring-sm">
+                        <svg width="50" height="50" viewBox="0 0 50 50">
+            <circle cx="25" cy="25" r="20" fill="none" stroke="rgba(29,158,117,0.15)" stroke-width="5"/>
+            <circle cx="25" cy="25" r="20" fill="none" stroke="#29CC8F" stroke-width="5" stroke-dasharray="125.7" stroke-dashoffset="34" stroke-linecap="round"/>
+          </svg>
+                        <div class="sring-c">720</div>
+                    </div>
+                    <div class="prev-info">
+                        <strong>Your Savings Score</strong>
+                        <p>Top 28% this month · Level 4</p>
+                    </div>
+                </div>
+                <div class="uni-b">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg> PES University · BCA 2024–25
+                </div>
+            </div>
+
+            <!-- FORM RIGHT -->
+            <div class="lform-panel">
+                <div class="fhead">
+                    <h2 id="fh2">Welcome back 👋</h2>
+                    <p id="fsub">Sign in to continue your financial journey</p>
+                </div>
+                <div class="atabs">
+                    <div class="atab active" onclick="stab('login')">Sign In</div>
+                    <div class="atab" onclick="stab('reg')">Register</div>
+                </div>
+
+                <!-- LOGIN -->
+                <div class="lf" id="f-login">
+                    <div class="field">
+                        <label>University Email</label>
+                        <div class="fw">
+                            <svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+                            <input type="email" id="le" placeholder="you@pes.edu" />
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Password</label>
+                        <div class="fw">
+                            <svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            <input type="password" id="lp" placeholder="Enter password" />
+                        </div>
+                    </div>
+                    <div class="forgot" onclick="doForgot()">Forgot password?</div>
+                    <div class="lmsg" id="lm"></div>
+                    <button class="btn-go" onclick="doLogin()"><span class="shine"></span>Sign In →</button>
+                    <div class="ldiv"><span>or</span></div>
+                    <button class="btn-demo" onclick="doDemo()">🎮 Try Demo Account</button>
+                    <div class="terms">By signing in you agree to our <a onclick="showToast('📄 Terms of Service — demo build')">Terms</a> &amp; <a onclick="showToast('🔒 Privacy Policy — demo build')">Privacy Policy</a></div>
+                </div>
+
+                <!-- REGISTER -->
+                <div class="lf off" id="f-reg">
+                    <div class="field">
+                        <label>Full Name</label>
+                        <div class="fw">
+                            <svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                            <input type="text" id="rn" placeholder="e.g. Manoj V" />
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Student ID</label>
+                        <div class="fw">
+                            <svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+                            <input type="text" id="ri" placeholder="PES1UG24CA089" />
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Email</label>
+                        <div class="fw">
+                            <svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+                            <input type="email" id="re" placeholder="you@pes.edu" />
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Password</label>
+                        <div class="fw">
+                            <svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            <input type="password" id="rp" placeholder="Min. 8 characters" />
+                        </div>
+                    </div>
+                    <div class="lmsg" id="rm"></div>
+                    <button class="btn-go" onclick="doReg()"><span class="shine"></span>Create Account →</button>
+                    <div class="terms">Already have an account? <a onclick="stab('login')">Sign in here</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD SCREEN -->
+    <div class="screen off" id="DS">
+        <nav class="sb">
+            <div class="sb-logo">Coin<span>Quest</span></div>
+            <div class="sb-user">
+                <div class="sb-av" id="sbAv">MV</div>
+                <div>
+                    <div class="sb-nm" id="sbNm">Manoj V</div>
+                    <div class="sb-id" id="sbId">PES1UG24CA089</div>
+                </div>
+            </div>
+            <div class="ni active" onclick="sdp('dashboard',this)">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard
+                <span class="pill-a" id="notificationNavBadge" style="display:none;margin-left:auto;"></span>
+            </div>
+            <div class="ni" onclick="sdp('expenses',this)">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>Expenses
+            </div>
+            <div class="ni" onclick="sdp('split',this)">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4"/><path d="M16 11l2 2 4-4"/></svg>Bill Split
+            </div>
+            <div class="ni" onclick="sdp('loans',this)">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/></svg>Loans
+            </div>
+            <div class="nsep"></div>
+            <div class="ni" onclick="sdp('lb',this)">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>Leaderboard
+            </div>
+            <div class="ni" onclick="sdp('tips',this)">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Smart Tips
+            </div>
+            <div class="sb-out" onclick="doLogout()">
+                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign
+                Out
+            </div>
+        </nav>
+
+        <main class="dmain">
+
+            <!-- DASHBOARD PAGE -->
+            <div class="dp active" id="dp-dashboard">
+                <div class="topbar">
+                    <div class="ptitle" id="greet">Good morning, Manoj 👋</div>
+                    <span class="xp-badge" id="xpBadge">⭐ 0 XP</span>
+                </div>
+                <div class="srow">
+                    <div class="sc">
+                        <div class="slbl">Monthly Budget <span class="edit-ic" onclick="toggleBudgetEdit()" title="Edit your budget">✎ Edit</span></div>
+                        <div class="sval sg" id="budgetVal">₹8,000</div>
+                        <div class="ssub sup" id="budgetSub">Set for this month</div>
+                        <div class="budget-edit-row" id="budgetEditRow">
+                            <input type="number" id="budgetInput" placeholder="e.g. 8000" min="1" onkeydown="if(event.key==='Enter')saveBudget()" />
+                            <button onclick="saveBudget()">Save</button>
+                        </div>
+                    </div>
+                    <div class="sc">
+                        <div class="slbl">Spent So Far</div>
+                        <div class="sval sr" id="spentVal">₹0</div>
+                        <div class="ssub sdn" id="spentSub">↓ 0% used</div>
+                    </div>
+                    <div class="sc">
+                        <div class="slbl">Saved This Month</div>
+                        <div class="sval sg" id="savedVal">₹0</div>
+                        <div class="ssub sup" id="savedSub">↑ 0% savings rate</div>
+                    </div>
+                    <div class="sc">
+                        <div class="slbl">Savings Score</div>
+                        <div class="sval sp" id="scoreVal">0</div>
+                        <div class="ssub sup" id="scoreSub">—</div>
+                    </div>
+                </div>
+                <div class="card" id="notificationCard" style="display:none;">
+                    <div class="ctitle">Notifications <span class="pill-a" id="notificationBadge"></span></div>
+                    <div id="notificationList"></div>
+                </div>
+                <div class="g2">
+                    <div class="card">
+                        <div class="ctitle">Savings Score <span class="pill-g" id="scoreLevelPill">Level 1</span></div>
+                        <div class="ssec">
+                            <div class="rw">
+                                <svg width="96" height="96" viewBox="0 0 96 96">
+<circle cx="48" cy="48" r="38" fill="none" stroke="#E5E7EB" stroke-width="8"/>
+<circle id="scoreRing" cx="48" cy="48" r="38" fill="none" stroke="#1D9E75" stroke-width="8" stroke-dasharray="238.8" stroke-dashoffset="238.8" stroke-linecap="round"/>
+</svg>
+                                <div class="rc">
+                                    <div class="rn" id="scoreRingNum">0</div>
+                                    <div class="rl">/ 1000</div>
+                                </div>
+                            </div>
+                            <div class="si">
+                                <h3 id="scoreTitle">Getting Started</h3>
+                                <p id="scoreText"></p>
+                                <div class="lvbar-bg">
+                                    <div class="lvbar-f" id="lvBarFill" style="width:0%"></div>
+                                </div>
+                                <div class="lvtxt"><span id="lvLeft">Level 1</span><span id="lvRight">Level 2</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="ctitle">Weekly Spending <span class="pill-a" id="weekTotal">This Week</span></div>
+                        <div class="cbars" id="weekBars">
+                            <div class="bcol">
+                                <div class="bval">₹320</div>
+                                <div class="bar" style="height:46px;background:#9FE1CB;opacity:.9"></div>
+                                <div class="blbl">Mon</div>
+                            </div>
+                            <div class="bcol">
+                                <div class="bval">₹780</div>
+                                <div class="bar" style="height:76px;background:#1D9E75;opacity:.8"></div>
+                                <div class="blbl">Tue</div>
+                            </div>
+                            <div class="bcol">
+                                <div class="bval">₹210</div>
+                                <div class="bar" style="height:30px;background:#9FE1CB;opacity:.9"></div>
+                                <div class="blbl">Wed</div>
+                            </div>
+                            <div class="bcol">
+                                <div class="bval">₹540</div>
+                                <div class="bar" style="height:60px;background:#1D9E75;opacity:.8"></div>
+                                <div class="blbl">Thu</div>
+                            </div>
+                            <div class="bcol">
+                                <div class="bval">₹1,100</div>
+                                <div class="bar" style="height:96px;background:#EF9F27;opacity:.85"></div>
+                                <div class="blbl">Fri</div>
+                            </div>
+                            <div class="bcol">
+                                <div class="bval">₹890</div>
+                                <div class="bar" style="height:84px;background:#1D9E75;opacity:.8"></div>
+                                <div class="blbl">Sat</div>
+                            </div>
+                            <div class="bcol">
+                                <div class="bval">₹400</div>
+                                <div class="bar" style="height:48px;background:#9FE1CB;opacity:.9"></div>
+                                <div class="blbl">Sun</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="g2">
+                    <div class="card">
+                        <div class="ctitle">Recent Expenses</div>
+                        <div id="recentList"></div>
+                    </div>
+                    <div class="card">
+                        <div class="ctitle">Budget by Category</div>
+                        <div id="catBudgets"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EXPENSES PAGE -->
+            <div class="dp" id="dp-expenses">
+                <div class="topbar">
+                    <div class="ptitle" id="expHeading">Track Expenses</div>
+                </div>
+                <div class="card">
+                    <div class="ctitle">Add New Expense</div>
+                    <div class="frow">
+                        <input class="fin" id="eDesc" placeholder="Description (e.g. Canteen lunch)" />
+                        <input class="fin" id="eAmt" placeholder="Amount (₹)" style="max-width:120px;" type="number" min="1" />
+                    </div>
+                    <div class="frow">
+                        <select class="fin" id="eCat">
+            <option value="🍔 Food">🍔 Food</option>
+            <option value="📚 Education">📚 Education</option>
+            <option value="🚌 Transport">🚌 Transport</option>
+            <option value="🎮 Entertainment">🎮 Entertainment</option>
+            <option value="🛍 Shopping">🛍 Shopping</option>
+            <option value="🏥 Health">🏥 Health</option>
+          </select>
+                        <input class="fin" id="eDate" type="date" style="max-width:150px;" />
+                        <button class="fbtn" onclick="addExpense()">+ Add</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="ctitle">All Expenses</div>
+                    <div class="dtabs" id="expTabs">
+                        <div class="dtab active" onclick="filterExp('All',this)">All</div>
+                        <div class="dtab" onclick="filterExp('Food',this)">Food</div>
+                        <div class="dtab" onclick="filterExp('Education',this)">Education</div>
+                        <div class="dtab" onclick="filterExp('Transport',this)">Transport</div>
+                        <div class="dtab" onclick="filterExp('Entertainment',this)">Entertainment</div>
+                        <div class="dtab" onclick="filterExp('Shopping',this)">Shopping</div>
+                        <div class="dtab" onclick="filterExp('Health',this)">Health</div>
+                    </div>
+                    <div class="frow" style="align-items:center;">
+                        <label for="expMonthFilter" style="font-size:11px;color:var(--dmuted);font-weight:600;">MONTH</label>
+                        <select class="fin" id="expMonthFilter" aria-label="Filter expenses by month" onchange="selectExpenseMonth(this.value)" style="max-width:220px;"></select>
+                    </div>
+                    <div id="expList"></div>
+                </div>
+            </div>
+
+            <!-- SPLIT PAGE -->
+            <div class="dp" id="dp-split">
+                <div class="topbar">
+                    <div class="ptitle">Bill Splitter</div>
+                </div>
+                <div class="g2">
+                    <div class="card">
+                        <div class="ctitle">Split a Bill</div>
+                        <div class="frow"><input class="fin" id="sDesc" placeholder="e.g. Dinner at Manto's" /></div>
+                        <div class="frow">
+                            <input class="fin" id="sAmt" placeholder="Total Amount (₹)" type="number" min="1" />
+                        </div>
+                        <div class="frow">
+                            <input class="fin" id="sRecipients" type="text" placeholder="Recipient emails (comma-separated)" aria-label="Registered recipient emails" />
+                        </div>
+                        <div class="ed" style="margin:-3px 0 10px;">Recipients must have a registered CoinQuest account.</div>
+                        <div class="frow"><button class="fbtn" id="splitSendButton" onclick="calcSplit()">Send Split Request</button></div>
+                        <div class="sres" id="sres">
+                            <p>✅ <span id="ssName">Bill</span> — each person pays: <strong id="spp">₹0</strong></p>
+                            <p id="ssFriends"></p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="ctitle">Recent Splits</div>
+                        <div id="splitList"></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="ctitle">Friends</div>
+                    <div class="pchips" id="friendChips"></div>
+                    <div class="frow" id="addFriendRow" style="display:none;">
+                        <input class="fin" id="newFriendName" placeholder="Friend's name" onkeydown="if(event.key==='Enter')addFriend()" />
+                        <button class="fbtn" onclick="addFriend()">Add</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LOANS PAGE -->
+            <div class="dp" id="dp-loans">
+                <div class="topbar">
+                    <div class="ptitle">Peer Loans</div>
+                </div>
+                <div class="srow" style="grid-template-columns:1fr 1fr 1fr;">
+                    <div class="sc">
+                        <div class="slbl">You Owe</div>
+                        <div class="sval sr" id="loanYouOweVal">₹0</div>
+                        <div class="ssub" id="loanYouOweSub">To 0 friends</div>
+                    </div>
+                    <div class="sc">
+                        <div class="slbl">Owed to You</div>
+                        <div class="sval sg" id="loanOwedVal">₹0</div>
+                        <div class="ssub" id="loanOwedSub">From 0 friends</div>
+                    </div>
+                    <div class="sc">
+                        <div class="slbl">Net Balance</div>
+                        <div class="sval sg" id="loanNetVal">₹0</div>
+                        <div class="ssub sup" id="loanNetSub">—</div>
+                    </div>
+                </div>
+                <div class="g2">
+                    <div class="card">
+                        <div class="ctitle">You Owe</div>
+                        <div id="loanYouOweList"></div>
+                    </div>
+                    <div class="card">
+                        <div class="ctitle">Owed to You</div>
+                        <div id="loanOwedList"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LEADERBOARD PAGE -->
+            <div class="dp" id="dp-lb">
+                <div class="topbar">
+                    <div class="ptitle">Leaderboard 🏆</div>
+                </div>
+                <div class="g2">
+                    <div class="card">
+                        <div class="ctitle">Monthly Savings Rank <span class="pill-g" id="lbMonth">This Month</span></div>
+                        <div id="lbList"></div>
+                    </div>
+                    <div class="card">
+                        <div class="ctitle">Your Achievements</div>
+                        <div class="ei">
+                            <div class="eico" style="background:#FAEEDA;">🔥</div>
+                            <div class="ein">
+                                <div class="en">7-Day Streak</div>
+                                <div class="ed">Logged 7 days in a row</div>
+                            </div>
+                            <div class="ea pos">+100 XP</div>
+                        </div>
+                        <div class="ei">
+                            <div class="eico" style="background:#E1F5EE;">🎯</div>
+                            <div class="ein">
+                                <div class="en">Budget Keeper</div>
+                                <div class="ed">Under budget last month</div>
+                            </div>
+                            <div class="ea pos">+200 XP</div>
+                        </div>
+                        <div class="ei">
+                            <div class="eico" style="background:#EEEDFE;">🤝</div>
+                            <div class="ein">
+                                <div class="en">Social Splitter</div>
+                                <div class="ed">Split 5 bills with friends</div>
+                            </div>
+                            <div class="ea pos">+150 XP</div>
+                        </div>
+                        <div class="ei" style="opacity:.4;">
+                            <div class="eico" style="background:#F1EFE8;">💎</div>
+                            <div class="ein">
+                                <div class="en">Diamond Saver</div>
+                                <div class="ed">Save 40% for 3 months — Locked</div>
+                            </div>
+                            <div class="ea" style="color:var(--dmuted);">+500 XP</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TIPS PAGE -->
+            <div class="dp" id="dp-tips">
+                <div class="topbar">
+                    <div class="ptitle">Smart Spending Tips</div>
+                </div>
+                <div class="g2">
+                    <div class="card">
+                        <div class="ctitle">AI-Powered Insights 🧠</div>
+                        <div id="tipsList"></div>
+                    </div>
+                    <div class="card">
+                        <div class="ctitle">Monthly Summary <span class="pill-a" id="tipsMonth">This Month</span></div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:13px;">
+                            <div style="background:var(--teal3);border-radius:9px;padding:10px 12px;">
+                                <div style="font-size:10px;color:var(--teal2);font-weight:600;margin-bottom:3px;">BIGGEST SPEND</div>
+                                <div style="font-size:16px;font-weight:700;color:var(--teal2);" id="tipBig">—</div>
+                                <div style="font-size:11px;color:var(--dmuted);" id="tipBigSub"></div>
+                            </div>
+                            <div style="background:var(--amber2);border-radius:9px;padding:10px 12px;">
+                                <div style="font-size:10px;color:var(--amber3);font-weight:600;margin-bottom:3px;">BEST SAVED</div>
+                                <div style="font-size:16px;font-weight:700;color:var(--amber3);" id="tipBest">—</div>
+                                <div style="font-size:11px;color:var(--dmuted);" id="tipBestSub"></div>
+                            </div>
+                            <div style="background:var(--coral2);border-radius:9px;padding:10px 12px;">
+                                <div style="font-size:10px;color:var(--coral);font-weight:600;margin-bottom:3px;">RISK AREA</div>
+                                <div style="font-size:16px;font-weight:700;color:var(--coral);" id="tipRisk">—</div>
+                                <div style="font-size:11px;color:var(--dmuted);" id="tipRiskSub"></div>
+                            </div>
+                            <div style="background:var(--purple2);border-radius:9px;padding:10px 12px;">
+                                <div style="font-size:10px;color:var(--purple);font-weight:600;margin-bottom:3px;">TRANSACTIONS</div>
+                                <div style="font-size:16px;font-weight:700;color:var(--purple);" id="tipTx">0</div>
+                                <div style="font-size:11px;color:var(--dmuted);">This month</div>
+                            </div>
+                        </div>
+                        <div style="background:var(--dbg);border-radius:9px;padding:10px 12px;font-size:12px;color:var(--dmuted);">💡 <strong style="color:var(--dtext);">Tip of the day:</strong> <span id="tipDaily"></span></div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        /* ── floating coins on login bg ── */
+        const bgfx = document.getElementById('bgfx');
+        for (let i = 0; i < 18; i++) {
+            const c = document.createElement('div');
+            c.className = 'coin';
+            const s = [20, 32, 48, 64][i % 4];
+            Object.assign(c.style, {
+                width: s + 'px',
+                height: s + 'px',
+                left: Math.random() * 100 + '%',
+                bottom: '-80px',
+                background: i % 3 === 0 ? '#EF9F27' : i % 3 === 1 ? '#1D9E75' : '#29CC8F',
+                opacity: '0.07',
+                animationDuration: (10 + Math.random() * 18) + 's',
+                animationDelay: (Math.random() * 12) + 's'
+            });
+            bgfx.appendChild(c);
+        }
+
+        /* ── month/year labels, kept in sync with the real date so text never
+             goes stale against whatever day the app is actually opened on ── */
+        function setMonthLabels() {
+            const now = new Date();
+            const monShort = now.toLocaleDateString('en-IN', {
+                month: 'short',
+                year: 'numeric'
+            });
+            const lbM = document.getElementById('lbMonth');
+            const tipsM = document.getElementById('tipsMonth');
+            updateExpenseHeading();
+            if (lbM) lbM.textContent = monShort;
+            if (tipsM) tipsM.textContent = monShort;
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           BACKEND STORAGE LAYER
+           Persists every functionality's data (budget, expenses, friends,
+           bill splits, loans) to Claude's window.storage so it survives
+           refreshes and future sessions. Falls back to the in-file demo
+           defaults if storage is unavailable or a key hasn't been saved yet.
+           ══════════════════════════════════════════════════════════════ */
+        const STORE_KEYS = {
+            get budget() {
+                return sk('budget');
+            },
+            get expenses() {
+                return sk('expenses');
+            },
+            get friends() {
+                return sk('friends');
+            },
+            get splits() {
+                return sk('splits');
+            },
+            get loans() {
+                return sk('loans');
+            }
+        };
+
+        async function saveToBackend(key, value) {
+            try {
+                localStorage.setItem(key, JSON.stringify(value));
+                return true;
+            } catch (err) {
+                console.error('Storage save failed for', key, err);
+                return false;
+            }
+        }
+
+        async function loadFromBackend(key) {
+            try {
+                const value = localStorage.getItem(key);
+                return value ? JSON.parse(value) : null;
+            } catch (err) {
+                /* key not found yet, or storage unavailable — use defaults */
+                return null;
+            }
+        }
+
+        let backendReady = null;
+
+        function loadAppState() {
+            if (backendReady) return backendReady;
+            backendReady = (async() => {
+                const [b, ex, fr, sp, ln] = await Promise.all([
+                    loadFromBackend(STORE_KEYS.budget),
+                    loadFromBackend(STORE_KEYS.expenses),
+                    loadFromBackend(STORE_KEYS.friends),
+                    loadFromBackend(STORE_KEYS.splits),
+                    loadFromBackend(STORE_KEYS.loans)
+                ]);
+                if (b && typeof b.budget === 'number') monthlyBudget = b.budget;
+                if (Array.isArray(ex) && ex.length) expenses = ex;
+                if (Array.isArray(fr) && fr.length) friends = fr;
+                if (Array.isArray(sp) && sp.length) splits = sp;
+                if (ln && Array.isArray(ln.youOwe) && Array.isArray(ln.owedToYou)) loans = ln;
+            })();
+            return backendReady;
+        }
+        /* ── state (defaults shown until saved browser data loads) ── */
+        let monthlyBudget = 8000;
+
+        let friends = [{
+            name: 'Mithun',
+            ini: 'KM',
+            color: '#1D9E75'
+        }, {
+            name: 'Pritika',
+            ini: 'PS',
+            color: '#7F77DD'
+        }, {
+            name: 'Bhargav',
+            ini: 'RB',
+            color: '#D85A30'
+        }, {
+            name: 'Arjun',
+            ini: 'AK',
+            color: '#EF9F27'
+        }];
+
+        let splits = [{
+            desc: 'Dinner — 4 friends',
+            amt: 1200,
+            count: 4,
+            icon: '🍽',
+            bg: '#E1F5EE',
+            date: 'Apr 8'
+        }, {
+            desc: 'Hostel Trip — 3 people',
+            amt: 2400,
+            count: 3,
+            icon: '🏨',
+            bg: '#FAEEDA',
+            date: 'Apr 3'
+        }, {
+            desc: 'Movie Night — 5 friends',
+            amt: 1500,
+            count: 5,
+            icon: '🎬',
+            bg: '#EEEDFE',
+            date: 'Mar 31'
+        }];
+
+        let loans = {
+            youOwe: [{
+                name: 'Pritika Singh',
+                ini: 'PS',
+                color: '#7F77DD',
+                desc: 'Canteen',
+                date: 'Apr 6',
+                amt: 300,
+                status: 'Pending'
+            }, {
+                name: 'R Bhargav',
+                ini: 'RB',
+                color: '#D85A30',
+                desc: 'Stationary',
+                date: 'Apr 2',
+                amt: 350,
+                status: 'Pending'
+            }],
+            owedToYou: [{
+                name: 'KV Mithun',
+                ini: 'KM',
+                color: '#1D9E75',
+                desc: 'Movie tickets',
+                date: 'Mar 30',
+                amt: 500,
+                status: 'Pending'
+            }, {
+                name: 'Arjun K',
+                ini: 'AK',
+                color: '#EF9F27',
+                desc: 'Hostel dues',
+                date: 'Apr 1',
+                amt: 400,
+                status: 'Pending'
+            }, {
+                name: 'Sneha R',
+                ini: 'SR',
+                color: '#534AB7',
+                desc: 'Lunch',
+                date: 'Mar 22',
+                amt: 300,
+                status: 'Settled'
+            }]
+        };
+
+
+        function toggleBudgetEdit() {
+            const row = document.getElementById('budgetEditRow');
+            const isOpen = row.style.display === 'flex';
+            row.style.display = isOpen ? 'none' : 'flex';
+            if (!isOpen) {
+                const inp = document.getElementById('budgetInput');
+                inp.value = monthlyBudget;
+                inp.focus();
+                inp.select();
+            }
+        }
+
+        function saveBudget() {
+            const val = parseFloat(document.getElementById('budgetInput').value);
+            if (!val || val <= 0) {
+                showToast('⚠ Enter a valid budget amount');
+                return;
+            }
+            monthlyBudget = val;
+            document.getElementById('budgetEditRow').style.display = 'none';
+            saveToBackend(STORE_KEYS.budget, {
+                budget: val
+            });
+            updateDashboardStats();
+            const email = localStorage.getItem('userEmail');
+            if (email) fetch('http://localhost:3000/api/budget', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: email,
+                    amount: val
+                })
+            }).then(async response => {
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || 'Budget save failed');
+                renderLeaderboard();
+            }).catch(err => {
+                console.error('Budget save failed:', err);
+                showToast('⚠ Budget saved locally — could not sync with server');
+            });
+            showToast('✓ Monthly budget set to ₹' + val.toLocaleString('en-IN'));
+        }
+
+        /* recompute Spent / Saved from the live expenses list against the current budget */
+        function updateStatCards() {
+            const totalSpent = monthSpent();
+            const saved = monthlyBudget - totalSpent;
+            const pctUsed = monthlyBudget > 0 ? Math.round((totalSpent / monthlyBudget) * 100) : 0;
+            const pctSaved = monthlyBudget > 0 ? Math.round((saved / monthlyBudget) * 100) : 0;
+
+            document.getElementById('budgetVal').textContent = '₹' + monthlyBudget.toLocaleString('en-IN');
+            document.getElementById('spentVal').textContent = '₹' + totalSpent.toLocaleString('en-IN');
+
+            const spentSub = document.getElementById('spentSub');
+            spentSub.textContent = (pctUsed > 100 ? '⚠ ' : '↓ ') + pctUsed + '% used';
+            spentSub.className = 'ssub ' + (pctUsed > 100 ? 'sdn' : 'sdn');
+
+            const savedVal = document.getElementById('savedVal');
+            const savedSub = document.getElementById('savedSub');
+            if (saved >= 0) {
+                savedVal.textContent = '₹' + saved.toLocaleString('en-IN');
+                savedVal.className = 'sval sg';
+                savedSub.textContent = '↑ ' + pctSaved + '% savings rate';
+                savedSub.className = 'ssub sup';
+            } else {
+                savedVal.textContent = '−₹' + Math.abs(saved).toLocaleString('en-IN');
+                savedVal.className = 'sval sr';
+                savedSub.textContent = '↓ Over budget by ' + Math.abs(pctSaved) + '%';
+                savedSub.className = 'ssub sdn';
+            }
+        }
+
+        /* ── friends (bill split) ── */
+        const friendPalette = ['#1D9E75', '#7F77DD', '#D85A30', '#EF9F27', '#534AB7', '#0F6E56'];
+
+        function renderFriends() {
+            const wrap = document.getElementById('friendChips');
+            if (!wrap) return;
+            wrap.innerHTML = friends.map(f =>
+                    `<div class="pchip"><div class="pcav" style="background:${f.color}">${f.ini}</div>${f.name}</div>`
+                ).join('') +
+                '<div class="pchip" style="border-style:dashed;cursor:pointer;" onclick="toggleAddFriend()">+ Add</div>';
+        }
+
+        function toggleAddFriend() {
+            const row = document.getElementById('addFriendRow');
+            const isOpen = row.style.display === 'flex';
+            row.style.display = isOpen ? 'none' : 'flex';
+            if (!isOpen) {
+                const inp = document.getElementById('newFriendName');
+                inp.value = '';
+                inp.focus();
+            }
+        }
+
+        function addFriend() {
+            const inp = document.getElementById('newFriendName');
+            const name = inp.value.trim();
+            if (!name) {
+                showToast('⚠ Enter a name');
+                return;
+            }
+            const ini = name.split(' ').map(w => w[0] || '').join('').slice(0, 2).toUpperCase() || 'U';
+            const color = friendPalette[friends.length % friendPalette.length];
+            friends.push({
+                name,
+                ini,
+                color
+            });
+            document.getElementById('addFriendRow').style.display = 'none';
+            renderFriends();
+            saveToBackend(STORE_KEYS.friends, friends);
+            showToast('✓ ' + name + ' added to Friends');
+        }
+
+        /* ── bill split history ── */
+        function renderSplits() {
+            const wrap = document.getElementById('splitList');
+            if (!wrap) return;
+            if (!splits.length) {
+                wrap.innerHTML = '<div class="empty-msg">No splits yet.</div>';
+                return;
+            }
+            wrap.innerHTML = splits.map(s => {
+                const each = Math.round(s.amt / s.count);
+                return `<div class="ei">
+      <div class="eico" style="background:${s.bg}">${s.icon}</div>
+      <div class="ein"><div class="en">${esc(s.desc)}</div><div class="ed">${esc(s.date)} · ₹${Number(s.amt).toLocaleString('en-IN')} total</div></div>
+      <div class="ea neg">₹${each.toLocaleString('en-IN')} each</div>
+    </div>`;
+            }).join('');
+        }
+
+        /* ── loans ── */
+        function renderLoans() {
+            const oweList = document.getElementById('loanYouOweList');
+            const owedList = document.getElementById('loanOwedList');
+            if (!oweList || !owedList) return;
+
+            const renderRow = (item, idx, type, amtClass) => `<div class="loi">
+      <div class="lav" style="background:${item.color};">${item.ini}</div>
+      <div class="loin"><div class="loname">${item.name}</div><div class="lodate">${item.date} · ${item.desc}</div></div>
+      <div class="loamt ${amtClass}">₹${item.amt.toLocaleString('en-IN')}</div>
+      <div class="lst ${item.status==='Settled'?'lss':'lsp'}" onclick="toggleLoanStatus('${type}',${idx})" title="Click to toggle">${item.status}</div>
+    </div>`;
+
+            oweList.innerHTML = loans.youOwe.length ?
+                loans.youOwe.map((it, i) => renderRow(it, i, 'youOwe', 'owe')).join('') :
+                '<div class="empty-msg">Nothing pending 🎉</div>';
+            owedList.innerHTML = loans.owedToYou.length ?
+                loans.owedToYou.map((it, i) => renderRow(it, i, 'owedToYou', 'owed')).join('') :
+                '<div class="empty-msg">Nothing pending 🎉</div>';
+
+            const totalYouOwe = loans.youOwe.filter(i => i.status === 'Pending').reduce((s, i) => s + i.amt, 0);
+            const totalOwed = loans.owedToYou.filter(i => i.status === 'Pending').reduce((s, i) => s + i.amt, 0);
+            const net = totalOwed - totalYouOwe;
+            const oweFriends = loans.youOwe.filter(i => i.status === 'Pending').length;
+            const owedFriends = loans.owedToYou.filter(i => i.status === 'Pending').length;
+
+            document.getElementById('loanYouOweVal').textContent = '₹' + totalYouOwe.toLocaleString('en-IN');
+            document.getElementById('loanYouOweSub').textContent = 'To ' + oweFriends + ' friend' + (oweFriends === 1 ? '' : 's');
+            document.getElementById('loanOwedVal').textContent = '₹' + totalOwed.toLocaleString('en-IN');
+            document.getElementById('loanOwedSub').textContent = 'From ' + owedFriends + ' friend' + (owedFriends === 1 ? '' : 's');
+
+            const netVal = document.getElementById('loanNetVal');
+            const netSub = document.getElementById('loanNetSub');
+            if (net >= 0) {
+                netVal.textContent = '+₹' + net.toLocaleString('en-IN');
+                netVal.className = 'sval sg';
+                netSub.textContent = net === 0 ? 'All settled up' : "You're in the green!";
+                netSub.className = 'ssub sup';
+            } else {
+                netVal.textContent = '−₹' + Math.abs(net).toLocaleString('en-IN');
+                netVal.className = 'sval sr';
+                netSub.textContent = 'You owe more than you\'re owed';
+                netSub.className = 'ssub sdn';
+            }
+        }
+
+        function toggleLoanStatus(type, idx) {
+            const item = loans[type][idx];
+            if (!item) return;
+            item.status = item.status === 'Settled' ? 'Pending' : 'Settled';
+            renderLoans();
+            updateDashboardStats();
+            saveToBackend(STORE_KEYS.loans, loans);
+            showToast(item.status === 'Settled' ? '✓ Marked as settled' : '↺ Marked as pending');
+        }
+
+        /* ── auth tab ── */
+        function stab(t) {
+            document.querySelectorAll('.atab').forEach((el, i) => el.classList.toggle('active', (t === 'login' && i === 0) || (t === 'reg' && i === 1)));
+            document.getElementById('f-login').classList.toggle('off', t !== 'login');
+            document.getElementById('f-reg').classList.toggle('off', t !== 'reg');
+            document.getElementById('fh2').textContent = t === 'login' ? 'Welcome back 👋' : 'Create account 🚀';
+            document.getElementById('fsub').textContent = t === 'login' ? 'Sign in to continue your journey' : 'Join CoinQuest today';
+        }
+
+        function msg(id, type, txt) {
+            const el = document.getElementById(id);
+            el.className = 'lmsg ' + type;
+            el.textContent = txt;
+            el.style.display = 'block';
+        }
+
+        function showToast(txt) {
+            const t = document.getElementById('toast');
+            t.textContent = txt;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2200);
+        }
+
+        function doForgot() {
+            showToast('🔑 Password reset link would be emailed here (demo build)');
+        }
+
+        function launch(user) {
+            const ov = document.getElementById('lov');
+            ov.classList.add('show');
+            setTimeout(async() => {
+                try {
+                    await initUserData(user);
+                    document.getElementById('LS').classList.add('off');
+                    document.getElementById('DS').classList.remove('off');
+                    document.getElementById('sbNm').textContent = user.name;
+                    document.getElementById('sbId').textContent = user.id;
+                    document.getElementById('sbAv').textContent = user.ini;
+                    const lbAv = document.getElementById('lbAv'),
+                        lbNm = document.getElementById('lbNm');
+                    if (lbAv) lbAv.textContent = user.ini;
+                    if (lbNm) lbNm.innerHTML = user.name + ' <span style="font-size:10px;color:var(--dmuted);">(You)</span>';
+                    const h = new Date().getHours();
+                    const g = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+                    document.getElementById('greet').textContent = g + ', ' + user.name.split(' ')[0] + ' 👋';
+                    ov.classList.remove('show');
+                    setMonthLabels();
+                    initExpenses();
+                    updateDashboardStats();
+                    renderFriends();
+                    renderSplits();
+                    renderLoans();
+                } catch (err) {
+                    console.error('Dashboard launch failed:', err);
+                    showToast('⚠ Dashboard error: ' + err.message);
+                } finally {
+                    ov.classList.remove('show'); /* loader can never get stuck */
+                }
+            }, 1500);
+        }
+
+        async function doLogin() {
+            const e = document.getElementById('le').value.trim();
+            const p = document.getElementById('lp').value;
+
+            if (!e || !p) {
+                msg('lm', 'err', 'Please enter email and password.');
+                return;
+            }
+
+            try {
+                msg('lm', 'ok', 'Signing in...');
+
+                const response = await fetch('http://localhost:3000/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: e,
+                        password: p
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    msg('lm', 'err', data.message || 'Login failed.');
+                    return;
+                }
+
+                const u = data.user;
+                localStorage.setItem('userEmail', u.email);
+
+                const ini = u.name
+                    .split(' ')
+                    .map(w => w[0] || '')
+                    .join('')
+                    .slice(0, 2)
+                    .toUpperCase() || 'U';
+
+                const studentId = localStorage.getItem('studentId:' + u.email) || ('USER' + u.id);
+
+                msg('lm', 'ok', '✓ Login successful!');
+                setTimeout(() => launch({
+                    name: u.name,
+                    id: studentId,
+                    ini: ini
+                }), 600);
+
+            } catch (error) {
+                console.error('Login connection error:', error);
+                msg('lm', 'err', 'Cannot connect to the backend. Make sure server.js is running.');
+            }
+        }
+
+        function doDemo() {
+            localStorage.removeItem('userEmail');
+            document.getElementById('le').value = 'manoj@pes.edu';
+            document.getElementById('lp').value = 'demo1234';
+            msg('lm', 'ok', '✓ Demo credentials loaded! Signing in…');
+            setTimeout(() => launch({
+                name: 'Manoj V',
+                id: 'PES1UG24CA089',
+                ini: 'MV'
+            }), 900);
+        }
+        async function doReg() {
+            const n = document.getElementById('rn').value.trim();
+            const i = document.getElementById('ri').value.trim();
+            const e = document.getElementById('re').value.trim();
+            const p = document.getElementById('rp').value;
+
+            if (!n || !i || !e || !p) {
+                msg('rm', 'err', 'Please fill in all fields.');
+                return;
+            }
+
+            if (!e.includes('@')) {
+                msg('rm', 'err', 'Enter a valid email address.');
+                return;
+            }
+
+            if (!i.toUpperCase().startsWith('PES')) {
+                msg('rm', 'err', 'Enter a valid PES Student ID.');
+                return;
+            }
+
+            if (p.length < 8) {
+                msg('rm', 'err', 'Password must be at least 8 characters.');
+                return;
+            }
+
+            try {
+                msg('rm', 'ok', 'Creating your account...');
+
+                const response = await fetch('http://localhost:3000/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: n,
+                        email: e,
+                        password: p
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    msg('rm', 'err', data.message || 'Registration failed.');
+                    return;
+                }
+
+                msg('rm', 'ok', '✓ Account created successfully!');
+                localStorage.setItem('userEmail', e);
+                localStorage.setItem('studentId:' + e, i.toUpperCase());
+
+                const ini = n
+                    .split(' ')
+                    .map(w => w[0] || '')
+                    .join('')
+                    .slice(0, 2)
+                    .toUpperCase() || 'U';
+
+                setTimeout(() => launch({
+                    name: n,
+                    id: i.toUpperCase(),
+                    ini: ini
+                }), 800);
+
+            } catch (error) {
+                console.error('Registration connection error:', error);
+                msg('rm', 'err', 'Cannot connect to the backend. Make sure server.js is running.');
+            }
+        }
+
+        function doLogout() {
+            clearInterval(tickTimer);
+            localStorage.removeItem('userEmail');
+            document.getElementById('DS').classList.add('off');
+            document.getElementById('LS').classList.remove('off');
+            /* reset both forms so a fresh session doesn't inherit stale input/messages */
+            document.getElementById('le').value = '';
+            document.getElementById('lp').value = '';
+            document.getElementById('lm').style.display = 'none';
+            document.getElementById('rn').value = '';
+            document.getElementById('ri').value = '';
+            document.getElementById('re').value = '';
+            document.getElementById('rp').value = '';
+            document.getElementById('rm').style.display = 'none';
+            stab('login');
+        }
+
+        /* ── dashboard nav ── */
+        function sdp(name, el) {
+            document.querySelectorAll('.dp').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.ni').forEach(n => n.classList.remove('active'));
+            document.getElementById('dp-' + name).classList.add('active');
+            if (el) el.classList.add('active');
+        }
+
+        /* ── bill split ── */
+        async function calcSplit() {
+            const desc = document.getElementById('sDesc').value.trim();
+            const amount = Number(document.getElementById('sAmt').value);
+            const email = authEmail();
+            const recipients = Array.from(new Set(
+                document.getElementById('sRecipients').value
+                    .split(/[;,\n]+/)
+                    .map(value => value.trim().toLowerCase())
+                    .filter(Boolean)
+            ));
+
+            if (!email) {
+                showToast('⚠ Sign in to a registered account to send a split');
+                return;
+            }
+            if (!desc) {
+                showToast('⚠ Enter a description for the split');
+                return;
+            }
+            if (!Number.isFinite(amount) || amount <= 0) {
+                showToast('⚠ Enter a valid bill amount');
+                return;
+            }
+            const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!recipients.length || recipients.some(recipient => !validEmail.test(recipient))) {
+                showToast('⚠ Enter one or more valid registered email addresses');
+                return;
+            }
+            if (recipients.includes(email.trim().toLowerCase())) {
+                showToast('⚠ You cannot send a split request to yourself');
+                return;
+            }
+
+            const button = document.getElementById('splitSendButton');
+            button.disabled = true;
+            button.textContent = 'Sending…';
+            const icons = [{
+                i: '🍽',
+                b: '#E1F5EE'
+            }, {
+                i: '🏨',
+                b: '#FAEEDA'
+            }, {
+                i: '🎬',
+                b: '#EEEDFE'
+            }, {
+                i: '🍕',
+                b: '#FAECE7'
+            }];
+            const pick = icons[Math.floor(Math.random() * icons.length)];
+            try {
+                const response = await fetch(API + '/splits', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email,
+                        description: desc,
+                        totalAmount: amount,
+                        recipients
+                    })
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || 'Could not send split request');
+
+                const participantCount = Number(data.participantCount);
+                const amountPerPerson = Number(data.amountPerPerson);
+                document.getElementById('ssName').textContent = desc;
+                document.getElementById('spp').textContent = '₹' + amountPerPerson.toLocaleString('en-IN', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+                document.getElementById('ssFriends').textContent =
+                    `Split request sent to ${data.recipientCount} registered user${data.recipientCount === 1 ? '' : 's'}.`;
+                document.getElementById('sres').style.display = 'block';
+
+                splits.unshift({
+                    desc: desc + ' — ' + participantCount + ' people',
+                    amt: amount,
+                    count: participantCount,
+                    icon: pick.i,
+                    bg: pick.b,
+                    date: new Date().toLocaleDateString('en-IN', {
+                        month: 'short',
+                        day: 'numeric'
+                    })
+                });
+                if (splits.length > 8) splits.length = 8;
+                renderSplits();
+                saveToBackend(STORE_KEYS.splits, splits);
+                document.getElementById('sDesc').value = '';
+                document.getElementById('sAmt').value = '';
+                document.getElementById('sRecipients').value = '';
+                showToast('✓ Split request sent; recipients will see a dashboard notification');
+            } catch (error) {
+                console.error('Split request failed:', error);
+                showToast('⚠ ' + error.message);
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Send Split Request';
+            }
+        }
+
+        /* ── expenses ── */
+        const catBg = {
+            'Food': '#E1F5EE',
+            'Education': '#FAEEDA',
+            'Transport': '#EEEDFE',
+            'Entertainment': '#FAECE7',
+            'Shopping': '#E1F5EE',
+            'Health': '#FAECE7'
+        };
+
+        let expenses = [];
+
+        let activeFilter = 'All';
+        let selectedExpenseMonth = '';
+
+
+        function catKey(cat) {
+            const value = String(cat || '').trim();
+            const categories = Object.keys(ICON);
+            const match = candidate => categories.find(key => key.toLowerCase() === candidate.toLowerCase());
+            return match(value) || match(value.replace(/^\S+\s*/, '').trim().split(/\s+/)[0] || '') || 'Other';
+        }
+
+        function filterExp(name, el) {
+            activeFilter = name;
+            document.querySelectorAll('#expTabs .dtab').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            renderExpenses();
+        }
+
+        function formatExpenseMonth(monthKey) {
+            const [year, month] = monthKey.split('-').map(Number);
+            return new Date(year, month - 1, 1).toLocaleDateString('en-IN', {
+                month: 'long',
+                year: 'numeric'
+            });
+        }
+
+        function updateExpenseHeading() {
+            const heading = $('expHeading');
+            if (!heading) return;
+            const month = selectedExpenseMonth || todayISO().slice(0, 7);
+            heading.textContent = month === 'all' ?
+                'All Expenses — All Months' :
+                'Expenses — ' + formatExpenseMonth(month);
+        }
+
+        function updateExpenseMonthOptions() {
+            const select = $('expMonthFilter');
+            if (!select) return;
+            const months = new Set([todayISO().slice(0, 7)]);
+            expenses.forEach(expense => {
+                if (/^\d{4}-\d{2}-\d{2}$/.test(expense.date || '')) {
+                    months.add(expense.date.slice(0, 7));
+                }
+            });
+            const sortedMonths = Array.from(months).sort().reverse();
+            if (selectedExpenseMonth !== 'all' && !months.has(selectedExpenseMonth)) {
+                selectedExpenseMonth = todayISO().slice(0, 7);
+            }
+            select.innerHTML = '<option value="all">All months</option>' +
+                sortedMonths.map(month => `<option value="${month}">${esc(formatExpenseMonth(month))}</option>`).join('');
+            select.value = selectedExpenseMonth;
+            updateExpenseHeading();
+        }
+
+        function selectExpenseMonth(month) {
+            if (month !== 'all' && !/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) return;
+            selectedExpenseMonth = month;
+            renderExpenses();
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           REAL-TIME ENGINE — every dashboard number is computed from
+           the user's real expense list + budget, and re-rendered on
+           every change (add / delete / budget edit / loan toggle),
+           every 30 s (date rollover), and across browser tabs.
+           ═══════════════════════════════════════════════════════════ */
+        const API = 'http://localhost:3000/api';
+        const CATS = {
+            Food: 35,
+            Education: 22,
+            Transport: 10,
+            Entertainment: 13,
+            Shopping: 15,
+            Health: 5
+        }; /* % of monthly budget allotted per category */
+        const ICON = {
+            Food: '🍔',
+            Education: '📚',
+            Transport: '🚌',
+            Entertainment: '🎮',
+            Shopping: '🛍',
+            Health: '🏥'
+        };
+        const DEMO_STATE = JSON.stringify({
+            friends,
+            splits,
+            loans
+        });
+        let storeNs = 'guest',
+            currentUser = {
+                name: 'You',
+                ini: 'U'
+            },
+            tickTimer = null;
+
+        const $ = id => document.getElementById(id);
+        const setT = (id, t) => {
+            const el = $(id);
+            if (el) el.textContent = t;
+        };
+        const inr = n => '₹' + Math.round(n).toLocaleString('en-IN');
+        const iso = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        const todayISO = () => iso(new Date());
+        const daysAgoISO = n => iso(new Date(Date.now() - n * 864e5));
+        const parseISO = s => new Date(s + 'T00:00:00');
+        const sk = name => 'coinquest:' + storeNs + ':' + name;
+        const authEmail = () => localStorage.getItem('userEmail');
+        const esc = s => String(s).replace(/[&<>"']/g, c => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        }[c]));
+        const daysInMonth = () => {
+            const n = new Date();
+            return new Date(n.getFullYear(), n.getMonth() + 1, 0).getDate();
+        };
+
+        function demoSeed() {
+            const mk = (desc, amt, key, ago) => ({
+                id: 'd' + desc + ago,
+                desc,
+                amt,
+                cat: ICON[key] + ' ' + key,
+                date: daysAgoISO(ago),
+                created: Date.now() - ago * 864e5
+            });
+            return [mk("Domino's Pizza", 340, 'Food', 0), mk('DSA Textbook', 560, 'Education', 1),
+                mk('Bus Pass', 200, 'Transport', 2), mk('Campus Café', 80, 'Food', 2),
+                mk('Steam Game', 499, 'Entertainment', 3), mk('Mess Monthly Fee', 1800, 'Food', 4)
+            ];
+        }
+
+        function normExp(e) {
+            const key = catKey(e.cat || '');
+            return {
+                id: e.id,
+                desc: e.desc,
+                amt: Number(e.amt) || 0,
+                cat: (ICON[key] || '🛍') + ' ' + key,
+                date: /^\d{4}-\d{2}-\d{2}/.test(e.date || '') ? e.date.slice(0, 10) : todayISO(),
+                created: e.created || 0
+            };
+        }
+
+        /* ── data helpers ── */
+        const monthExpenses = () => expenses.filter(e => e.date.startsWith(todayISO().slice(0, 7)));
+        const monthSpent = () => monthExpenses().reduce((s, e) => s + e.amt, 0);
+        const sortedExpenses = () => expenses.slice().sort((a, b) => b.date.localeCompare(a.date) || (b.created || 0) - (a.created || 0));
+
+        function catSpend() {
+            const o = {};
+            Object.keys(CATS).forEach(k => o[k] = 0);
+            monthExpenses().forEach(e => {
+                const k = catKey(e.cat);
+                o[k] = (o[k] || 0) + e.amt;
+            });
+            return o;
+        }
+
+        function dateLabel(e) {
+            if (e.date === todayISO()) return 'Today' + (e.created ? ', ' + new Date(e.created).toLocaleTimeString('en-IN', {
+                hour: 'numeric',
+                minute: '2-digit'
+            }) : '');
+            if (e.date === daysAgoISO(1)) return 'Yesterday';
+            return parseISO(e.date).toLocaleDateString('en-IN', {
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        /* ── savings score (0-1000): 500 spending pace + 300 savings rate + 200 logging consistency ── */
+        function computeScore() {
+            const b = monthlyBudget,
+                spent = monthSpent();
+            if (!b || !monthExpenses().length) return 0;
+            const expected = b * new Date().getDate() / daysInMonth();
+            const pace = spent / expected;
+            const paceScore = pace <= 1 ? 1 : Math.max(0, 2 - pace);
+            const rate = Math.max(0, Math.min(1, (b - spent) / b));
+            let logged = 0;
+            for (let i = 0; i < 7; i++)
+                if (expenses.some(e => e.date === daysAgoISO(i))) logged++;
+            return Math.round(500 * paceScore + 300 * rate + 200 * logged / 7);
+        }
+
+        /* ── renderers ── */
+        function renderScore(score) {
+            const lvl = Math.min(5, Math.floor(score / 200) + 1);
+            const tier = score >= 800 ? 'Money Master 👑' : score >= 600 ? 'Smart Saver 🏆' : score >= 400 ? 'Steady Spender' : score >= 200 ? 'Budget Rookie' : 'Getting Started';
+            const toNext = lvl < 5 ? lvl * 200 - score : 0;
+            const from = (lvl - 1) * 200;
+            setT('scoreVal', score);
+            setT('scoreRingNum', score);
+            setT('scoreLevelPill', 'Level ' + lvl);
+            setT('scoreTitle', tier);
+            setT('lvLeft', 'Level ' + lvl);
+            setT('lvRight', lvl < 5 ? 'Level ' + (lvl + 1) : 'Max');
+            setT('xpBadge', '⭐ ' + Math.round(score * 1.5 + expenses.length * 10).toLocaleString('en-IN') + ' XP');
+            setT('lbScore', score + ' pts');
+            const ring = $('scoreRing');
+            if (ring) ring.setAttribute('stroke-dashoffset', (238.8 * (1 - score / 1000)).toFixed(1));
+            const bar = $('lvBarFill');
+            if (bar) bar.style.width = (lvl < 5 ? Math.min(100, (score - from) / 200 * 100) : 100) + '%';
+            updateLeaderboardSummary(score);
+            renderLeaderboard();
+        }
+
+        function updateLeaderboardSummary(score) {
+            const entries = leaderboardEntries;
+            const me = entries && entries.find(entry => entry.isCurrentUser);
+            const rankLabel = !entries ? 'Rank loading' :
+                me ? 'Rank #' + me.rank + ' of ' + entries.length : 'Not ranked this month';
+            setT('scoreSub', rankLabel + ' · Level ' + Math.min(5, Math.floor(score / 200) + 1));
+            setT('scoreText', !monthlyBudget ? 'Set a monthly budget to start earning your score.' :
+                !monthExpenses().length ? 'Log your first expense to get a score.' :
+                !entries ? 'Loading your live database ranking…' :
+                !me ? 'Set a monthly budget and log an expense to join this month’s leaderboard.' :
+                rankLabel + ' this month. ' + (score < 800 ? Math.max(0, (Math.floor(score / 200) + 1) * 200 - score) + ' pts to your next level!' : 'Max level reached!'));
+        }
+
+        let leaderboardEntries = null;
+        let leaderboardRequest = 0;
+        let notificationRequest = 0;
+
+        async function renderLeaderboard() {
+            const box = $('lbList');
+            if (!box) return;
+            const email = authEmail();
+            const request = ++leaderboardRequest;
+            if (!email) {
+                leaderboardEntries = [];
+                box.innerHTML = '<div class="empty-msg">Sign in to view the live leaderboard.</div>';
+                updateLeaderboardSummary(computeScore());
+                return;
+            }
+
+            box.innerHTML = '<div class="empty-msg">Loading live leaderboard…</div>';
+            try {
+                const response = await fetch(API + '/leaderboard?email=' + encodeURIComponent(email), {
+                    cache: 'no-store',
+                    signal: AbortSignal.timeout(5000)
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || 'Leaderboard request failed');
+                if (request !== leaderboardRequest) return;
+                leaderboardEntries = Array.isArray(data.entries) ? data.entries : [];
+            } catch (error) {
+                if (request !== leaderboardRequest) return;
+                console.error('Leaderboard load failed:', error);
+                leaderboardEntries = null;
+                box.innerHTML = '<div class="empty-msg">Could not load the live leaderboard. Check the server and database.</div>';
+                updateLeaderboardSummary(computeScore());
+                return;
+            }
+
+            const medal = ['🥇', '🥈', '🥉'];
+            const colors = ['#1D9E75', '#7F77DD', '#D85A30', '#EF9F27', '#534AB7'];
+            box.innerHTML = leaderboardEntries.length ? leaderboardEntries.map((entry, idx) => `<div class="li ${entry.isCurrentUser?'lyou':''}">
+      <div class="lrnk">${medal[idx]||entry.rank}</div><div class="lav" style="background:${colors[idx % colors.length]}">${esc(entry.initials)}</div>
+      <div class="lnm">${esc(entry.name)}${entry.isCurrentUser?' <span style="font-size:10px;color:var(--dmuted);">(You)</span>':''}</div><div class="lsc">${entry.score} pts</div></div>`).join('') :
+                '<div class="empty-msg">No one has qualified yet. Set a monthly budget and log expenses to appear here.</div>';
+            updateLeaderboardSummary(computeScore());
+        }
+
+        async function renderNotifications() {
+            const card = $('notificationCard');
+            const list = $('notificationList');
+            const badge = $('notificationBadge');
+            const navBadge = $('notificationNavBadge');
+            if (!card || !list || !badge || !navBadge) return;
+
+            const email = authEmail();
+            const request = ++notificationRequest;
+            if (!email) {
+                card.style.display = 'none';
+                badge.style.display = 'none';
+                navBadge.style.display = 'none';
+                list.textContent = '';
+                return;
+            }
+
+            try {
+                const response = await fetch(API + '/notifications?email=' + encodeURIComponent(email), {
+                    cache: 'no-store',
+                    signal: AbortSignal.timeout(5000)
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || 'Could not load notifications');
+                if (request !== notificationRequest) return;
+
+                const notifications = Array.isArray(data.notifications) ? data.notifications : [];
+                badge.textContent = notifications.length + ' unread';
+                navBadge.textContent = String(notifications.length);
+                card.style.display = notifications.length ? 'block' : 'none';
+                badge.style.display = notifications.length ? 'inline-flex' : 'none';
+                navBadge.style.display = notifications.length ? 'inline-flex' : 'none';
+                list.innerHTML = notifications.map(notification => {
+                    const receivedAt = new Date(String(notification.createdAt || '').replace(' ', 'T'));
+                    const dateText = Number.isNaN(receivedAt.getTime()) ? '' :
+                        receivedAt.toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
+                    const amount = Number(notification.amountDue).toLocaleString('en-IN', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                    return `<div class="ei">
+      <div class="eico" style="background:#FAEEDA;">🔔</div>
+      <div class="ein"><div class="en">${esc(notification.senderName)} sent a split: ${esc(notification.description)}</div><div class="ed">${dateText ? 'Received ' + esc(dateText) : 'New split request'}</div></div>
+      <div class="ea neg">₹${amount}</div>
+      <button class="fbtn" onclick="markNotificationRead(${Number(notification.id)})">Mark read</button>
+    </div>`;
+                }).join('');
+            } catch (error) {
+                if (request !== notificationRequest) return;
+                console.error('Notification load failed:', error);
+                badge.style.display = 'none';
+                navBadge.style.display = 'none';
+                card.style.display = 'block';
+                list.innerHTML = '<div class="empty-msg">Could not load notifications. Check the server and database.</div>';
+            }
+        }
+
+        async function markNotificationRead(id) {
+            const email = authEmail();
+            if (!email) return;
+            try {
+                const response = await fetch(API + '/notifications/' + encodeURIComponent(id) + '/read', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || 'Could not mark notification as read');
+                await renderNotifications();
+            } catch (error) {
+                console.error('Mark notification read failed:', error);
+                showToast('⚠ ' + error.message);
+            }
+        }
+
+        function renderWeekly() {
+            const wrap = $('weekBars');
+            if (!wrap) return;
+            const now = new Date(),
+                dow = (now.getDay() + 6) % 7;
+            const names = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            const days = names.map((n, i) => {
+                const k = iso(new Date(now.getFullYear(), now.getMonth(), now.getDate() - dow + i));
+                return {
+                    n,
+                    k,
+                    v: expenses.filter(e => e.date === k).reduce((s, e) => s + e.amt, 0),
+                    today: k === todayISO()
+                };
+            });
+            const max = Math.max(...days.map(d => d.v), 1),
+                tot = days.reduce((s, d) => s + d.v, 0),
+                avg = tot / 7;
+            wrap.innerHTML = days.map(d => {
+                const h = d.v ? Math.max(8, Math.round(d.v / max * 90)) : 4;
+                const c = d.v === max && d.v > 0 ? '#EF9F27' : d.v > avg ? '#1D9E75' : '#9FE1CB';
+                return `<div class="bcol" title="${d.k}"><div class="bval">${d.v?inr(d.v):'–'}</div>
+        <div class="bar" style="height:${h}px;background:${c};opacity:${d.today?1:.8}"></div>
+        <div class="blbl" style="${d.today?'font-weight:700;color:var(--teal2)':''}">${d.n}</div></div>`;
+            }).join('');
+            setT('weekTotal', inr(tot) + ' this week');
+        }
+
+        function renderRecent() {
+            const box = $('recentList');
+            if (!box) return;
+            const rows = sortedExpenses().slice(0, 5);
+            box.innerHTML = rows.length ? rows.map(e => {
+                const k = catKey(e.cat);
+                return `<div class="ei"><div class="eico" style="background:${catBg[k]||'#F1EFE8'}">${e.cat.split(' ')[0]}</div>
+        <div class="ein"><div class="en">${esc(e.desc)}</div><div class="ed">${dateLabel(e)} · ${k}</div></div>
+        <div class="ea neg">−${inr(e.amt)}</div></div>`;
+            }).join('') : '<div class="empty-msg">No expenses yet — add your first one in the Expenses tab.</div>';
+        }
+
+        function renderCatBudgets() {
+            const box = $('catBudgets');
+            if (!box) return;
+            if (!monthlyBudget) {
+                box.innerHTML = '<div class="empty-msg">Set a monthly budget to see category limits.</div>';
+                return;
+            }
+            const cs = catSpend();
+            box.innerHTML = Object.keys(CATS).map(k => {
+                const lim = monthlyBudget * CATS[k] / 100,
+                    pct = lim ? cs[k] / lim * 100 : 0;
+                const col = pct >= 90 ? 'var(--coral)' : pct >= 70 ? 'var(--amber)' : 'var(--teal)';
+                return `<div class="bi"><div class="bm"><span class="bcat">${ICON[k]} ${k}</span><span class="bnum">${inr(cs[k])}/${inr(lim)}</span></div>
+        <div class="brbg"><div class="brf" style="width:${Math.min(100,pct).toFixed(0)}%;background:${col}"></div></div></div>`;
+            }).join('');
+        }
+
+        function renderTips() {
+            const list = $('tipsList');
+            if (!list) return;
+            const b = monthlyBudget,
+                spent = monthSpent(),
+                cs = catSpend(),
+                now = new Date(),
+                dim = daysInMonth(),
+                left = dim - now.getDate() + 1,
+                items = [];
+            if (!b) items.push(['Set your budget.', 'Tap ✎ Edit on the dashboard to set a monthly budget and unlock personalised insights.']);
+            else {
+                Object.keys(CATS).forEach(k => {
+                    const lim = b * CATS[k] / 100;
+                    if (cs[k] > lim) items.push([k + ' over limit.', `You've spent ${inr(cs[k])} against a ${inr(lim)} limit. Pause non-essentials here.`]);
+                    else if (cs[k] > 0 && cs[k] >= .8 * lim) items.push([k + ' ' + Math.round(cs[k] / lim * 100) + '% used.', `${inr(cs[k])} of ${inr(lim)} spent — only ${inr(lim-cs[k])} left this month.`]);
+                });
+                const proj = spent / now.getDate() * dim;
+                items.push([proj > b ? 'Pace warning.' : 'On track!', proj > b ? `At your current pace you'll spend about ${inr(proj)}, ${inr(proj-b)} over budget.` : `At your current pace you'll finish near ${inr(proj)} and save about ${inr(b-proj)}.`]);
+                items.push([b - spent < 0 ? 'Over budget.' : 'Daily limit: ' + inr((b - spent) / left) + '.', b - spent < 0 ? `You've exceeded your budget by ${inr(spent-b)}.` : `${inr(b-spent)} left for ${left} day${left===1?'':'s'}.`]);
+            }
+            const due = loans.youOwe.filter(l => l.status === 'Pending').reduce((s, l) => s + l.amt, 0);
+            if (due) items.push(['Loan alert.', `${inr(due)} in pending dues — settling early builds trust and helps your social score.`]);
+            list.innerHTML = items.map(t => `<div class="ti"><div class="td"></div><div class="tt"><strong>${t[0]}</strong> ${t[1]}</div></div>`).join('');
+
+            const ranked = Object.keys(CATS).sort((a, b2) => cs[b2] - cs[a]);
+            const pctOf = k => b ? cs[k] / (b * CATS[k] / 100) : 0;
+            const risk = Object.keys(CATS).sort((a, b2) => pctOf(b2) - pctOf(a))[0];
+            const best = Object.keys(CATS).sort((a, b2) => (b * CATS[b2] / 100 - cs[b2]) - (b * CATS[a] / 100 - cs[a]))[0];
+            const any = monthExpenses().length > 0;
+            setT('tipBig', any ? ICON[ranked[0]] + ' ' + ranked[0] : '—');
+            setT('tipBigSub', any ? inr(cs[ranked[0]]) + ' total' : 'No spending yet');
+            setT('tipBest', b ? ICON[best] + ' ' + best : '—');
+            setT('tipBestSub', b ? inr(Math.max(0, b * CATS[best] / 100 - cs[best])) + ' remaining' : 'Set a budget');
+            setT('tipRisk', any && b ? ICON[risk] + ' ' + risk : '—');
+            setT('tipRiskSub', any && b ? Math.round(pctOf(risk) * 100) + '% used' : '—');
+            setT('tipTx', monthExpenses().length);
+            setT('tipDaily', b ? (b - spent > 0 ? 'Set a daily limit of ' + inr((b - spent) / left) + ' to stay under budget for the rest of the month.' : 'You are over budget — try a no-spend day tomorrow.') : 'Set a monthly budget to get a daily limit.');
+        }
+
+        /* ── expenses list (with delete) ── */
+        function renderExpenses() {
+            const list = $('expList');
+            if (!list) return;
+            updateExpenseMonthOptions();
+            const rows = sortedExpenses().filter(e =>
+                (selectedExpenseMonth === 'all' || e.date.slice(0, 7) === selectedExpenseMonth) &&
+                (activeFilter === 'All' || catKey(e.cat) === activeFilter)
+            );
+            if (!rows.length) {
+                list.innerHTML = '<div class="empty-msg">No expenses found for this month and category.</div>';
+                return;
+            }
+            list.innerHTML = rows.map(e => {
+                const k = catKey(e.cat);
+                return `<div class="ei"><div class="eico" style="background:${catBg[k]||'#F1EFE8'}">${e.cat.split(' ')[0]}</div>
+        <div class="ein"><div class="en">${esc(e.desc)}</div><div class="ed">${dateLabel(e)} · ${k}</div></div>
+        <div class="ea neg">−${inr(e.amt)}</div>
+        <button class="xdel" title="Delete" onclick="deleteExpense('${String(e.id).replace(/'/g,'')}')">✕</button></div>`;
+            }).join('');
+        }
+
+        function addExpense() {
+            const desc = $('eDesc').value.trim(),
+                amt = parseFloat($('eAmt').value),
+                cat = $('eCat').value,
+                date = $('eDate').value || todayISO();
+            if (!desc) return showToast('⚠ Please enter a description');
+            if (!amt || amt <= 0) return showToast('⚠ Please enter a valid amount');
+            const e = {
+                id: 't' + Date.now(),
+                desc,
+                amt,
+                cat,
+                date,
+                created: Date.now()
+            };
+            expenses.unshift(e);
+            selectedExpenseMonth = date.slice(0, 7);
+            $('eDesc').value = '';
+            $('eAmt').value = '';
+            $('eDate').value = todayISO();
+            activeFilter = 'All';
+            document.querySelectorAll('#expTabs .dtab').forEach((t, i) => t.classList.toggle('active', i === 0));
+            updateDashboardStats();
+            saveToBackend(STORE_KEYS.expenses, expenses);
+            const spent = monthSpent();
+            showToast(monthlyBudget && spent > monthlyBudget ? '⚠ Expense added — you are over budget!' : '✓ Expense added!');
+            const email = authEmail();
+            if (email) fetch(API + '/expenses', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email,
+                        description: desc,
+                        amount: amt,
+                        category: catKey(cat),
+                        date
+                    })
+                }).then(async r => {
+                    const data = await r.json();
+                    if (!r.ok) throw new Error(data.message || 'Could not save expense');
+                    return data;
+                })
+                .then(d => {
+                    if (d.id) {
+                        e.id = d.id;
+                        saveToBackend(STORE_KEYS.expenses, expenses);
+                    }
+                    renderLeaderboard();
+                })
+                .catch(err => {
+                    console.error('Expense save failed:', err);
+                    showToast('⚠ Saved locally — could not sync with server');
+                });
+        }
+
+        function deleteExpense(id) {
+            expenses = expenses.filter(e => String(e.id) !== String(id));
+            updateDashboardStats();
+            saveToBackend(STORE_KEYS.expenses, expenses);
+            showToast('🗑 Expense removed');
+            const email = authEmail();
+            if (email && !String(id).startsWith('t')) fetch(API + '/expenses/' + encodeURIComponent(id) + '?email=' + encodeURIComponent(email), {
+                method: 'DELETE'
+            }).then(response => {
+                if (!response.ok) throw new Error('Could not delete expense from the server');
+                renderLeaderboard();
+            }).catch(error => {
+                console.error('Expense delete failed:', error);
+                showToast('⚠ Could not sync expense removal with the server');
+            });
+        }
+
+        function initExpenses() {
+            $('eDate').value = todayISO();
+            renderExpenses();
+        }
+
+        /* ── master refresh: call after ANY change ── */
+        function updateDashboardStats() {
+            updateStatCards();
+            const spent = monthSpent(),
+                left = daysInMonth() - new Date().getDate() + 1;
+            setT('budgetSub', monthlyBudget ? inr(Math.max(0, monthlyBudget - spent)) + ' left · ' + left + ' day' + (left === 1 ? '' : 's') + ' to go' : 'Tap ✎ Edit to set your budget');
+            const h = new Date().getHours();
+            setT('greet', (h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening') + ', ' + String(currentUser.name).split(/\s+/)[0] + ' 👋');
+            renderScore(computeScore());
+            renderNotifications();
+            renderWeekly();
+            renderRecent();
+            renderCatBudgets();
+            renderExpenses();
+            renderTips();
+        }
+
+        /* ── per-user data load (local cache first, then server) ── */
+        async function initUserData(user) {
+            const email = authEmail(),
+                demo = !email;
+            storeNs = email || 'demo';
+            currentUser = user;
+            const d = JSON.parse(DEMO_STATE);
+            monthlyBudget = demo ? 8000 : 0;
+            expenses = demo ? demoSeed() : [];
+            friends = demo ? d.friends : [];
+            splits = demo ? d.splits : [];
+            loans = demo ? d.loans : {
+                youOwe: [],
+                owedToYou: []
+            };
+            backendReady = null;
+            await loadAppState();
+            expenses = expenses.map(normExp);
+            if (email) {
+                try {
+                    const q = '?email=' + encodeURIComponent(email);
+                    const tf = u => fetch(u, {
+                        signal: AbortSignal.timeout(5000)
+                    }).then(r => r.json());
+                    const [b, x] = await Promise.all([tf(API + '/budget' + q), tf(API + '/expenses' + q)]);
+                    if (b && Number(b.amount) > 0) monthlyBudget = Number(b.amount);
+                    if (Array.isArray(x.expenses)) {
+                        expenses = x.expenses.map(r => normExp({
+                            id: r.id,
+                            desc: r.description,
+                            amt: r.amount,
+                            cat: r.category,
+                            date: r.expense_date,
+                            created: Date.parse(String(r.created_at || '').replace(' ', 'T')) || 0
+                        }));
+                        saveToBackend(STORE_KEYS.expenses, expenses);
+                    }
+                    saveToBackend(STORE_KEYS.budget, {
+                        budget: monthlyBudget
+                    });
+                } catch (err) {
+                    console.warn('Server unreachable, using local cache:', err);
+                    showToast('⚠ Offline — showing saved local data');
+                }
+            }
+            clearInterval(tickTimer);
+            tickTimer = setInterval(updateDashboardStats, 30000); /* keeps "today", greeting & pace fresh */
+        }
+
+        /* other browser tabs editing the same account → refresh instantly */
+        window.addEventListener('storage', ev => {
+            if (!ev.key || !ev.key.startsWith('coinquest:' + storeNs + ':') || !currentUser.ini) return;
+            backendReady = null;
+            loadAppState().then(() => {
+                expenses = expenses.map(normExp);
+                updateDashboardStats();
+                renderFriends();
+                renderSplits();
+                renderLoans();
+            });
+        });
+
+        /* ── enter key on login ── */
+        document.addEventListener('keydown', e => {
+            if (e.key !== 'Enter') return;
+            document.getElementById('f-login').classList.contains('off') ? doReg() : doLogin();
+        });
+    </script>
+</body>
+
+</html>
